@@ -1,0 +1,12 @@
+global:
+  scrape_interval:  10s
+
+scrape_configs:
+    - job_name: 'monex_test'
+
+      scrape_interval: 1s
+
+      static_configs:
+        -targets: ['ip:port']
+         labels:
+            groups: 'monex_test'

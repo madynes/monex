@@ -1,0 +1,268 @@
+#!/usr/bin/env python3
+
+from flask import Flask, jsonify, request, Response
+from flask_cors import CORS, cross_origin
+from datetime import datetime
+import requests, sys, json, math
+
+app = Flask(__name__)
+
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+experiences = []
+targets = []
+metrics = {}
+
+
+def parse_conf(conf_file):
+    with open(conf_file) as f:
+        json_conf = json.load(f)
+    for t in json_conf["targets"]:
+        if t['server'] in [targ['server'] for targ in targets]:
+            print("Config Error: {}".format(t['server']),file=sys.stderr)
+            print("  Each server name must be unique",file=sys.stderr)
+            sys.exit(1)
+        targets.append(t)
+    if "metrics" in json_conf.keys():
+        for m in json_conf["metrics"]:
+            metrics[m['name']] = m
+
+
+def get_csv_from_influxdb(server, fields, start, end, measurement, database , graph_type):
+    url = "http://{}/query".format(server)
+    if not fields:
+        str_fields = '*'
+    else:
+        str_fields = '"' + '","'.join([f[0] for f in fields]) + '"'
+    payload = {"epoch":"ns" ,"db":"{}".format(database),
+               "q":'SELECT {} FROM "{}" WHERE time >= {}s and time <= {}s'
+               .format(str_fields, measurement, start, end)}
+    print(payload)
+    data = requests.get(url, params=payload).json()
+    print(data)
+    columns = data['results'][0]['series'][0]['columns']
+    columns[0] = graph_type
+    out = ';'.join(columns)+"\n"
+    counter = 0
+    t = start*(10**9)
+    for val in data['results'][0]['series'][0]['values']:
+        if graph_type == 'timestamp':
+            time = val[0]/10**9
+            line = [time] + val[1:]
+        elif graph_type == 'duration':
+            dur = (val[0] - t)/10**9
+            line = [dur] + val[1:]
+        else: #sample
+            line = [counter] + val[1:]
+            counter += 1
+        current_line = (';'.join(map(str,line))+"\n")
+        out += current_line.replace('None','')
+    return out
+
+
+def get_csv_from_prometheus(server, query, start, end, step, labels, graph_type):
+    url = "http://{}/api/v1/query_range".format(server)
+    payload = {'query':query, 'start':start, 'end':end, 'step':step}
+    data = requests.get(url, params=payload)
+    print("Querying prometheus with:")
+    print(data.url)
+    data = data.json()
+    if graph_type == 'timestamp':
+        s = 0
+        columns = ['timestamp']
+    else: #duration
+        s = start
+        columns = ['duration']
+
+    lines = []
+    for t in data['data']['result'][0]['values']:
+        lines.append([str(t[0] - s)])
+
+    for serie in enumerate(data['data']['result']):
+        if not labels:
+            column_name = serie[0]
+        elif type(labels) == str:
+            column_name = serie[1]['metric'][serie_name].replace(';',',')
+        else:
+            names = []
+            for n in labels:
+                names.append(serie[1]['metric'][n].replace(';',','))
+            column_name = '_'.join(names)
+        columns.append(str(column_name))
+
+        for value in enumerate(serie[1]['values']):
+            lines[value[0]].append(str(value[1][1]))
+
+    output = ';'.join(columns)+"\n"
+    for line in lines:
+        output += (';'.join(line)+"\n")
+
+    return output
+
+
+def get_current_time(local=None, utc=None):
+    dec_loc_utc = math.ceil(datetime.now().timestamp() - datetime.utcnow().timestamp()) #SO UGLY
+    if utc:
+        utctime = int(utc)
+        localtime = utctime + dec_loc_utc
+    elif local:
+        localtime =  int(local)
+        utctime = localtime - dec_loc_utc
+    else:
+        localtime = datetime.now().timestamp()
+        utctime = datetime.utcnow().timestamp()
+    #We save local time and utc time...
+    return int(localtime), int(utctime)
+
+
+@app.route("/", methods=['POST','GET'])
+def hello():
+    return ""
+
+
+@app.route("/search", methods=['POST'])
+@cross_origin(max_age=600)
+def search():
+    data = {i[0] for i in experiences}
+    return jsonify(list(data))
+
+
+@app.route("/query", methods=['POST'])
+def query():
+    return jsonify({})
+
+
+@app.route("/start_exp", methods=['POST'])
+def start_xp():
+    content = request.get_json()
+    name = content['name']
+    if 'localtime' in content.keys():
+        time = get_current_time(local=content['localtime'])
+    elif 'utctime' in content.keys():
+        time = get_current_time(utc=content['utctime'])
+    else:
+        time = get_current_time()
+    if name in [a[0] for a in experiences]:
+        return "{} alredy started\n".format(name), 400
+    else :
+        experiences.append([name, 'start', time])
+    return "Starting {}\n".format(name), 201
+
+
+@app.route("/stop_exp", methods=['POST'])
+def stop_xp():
+    content = request.get_json()
+    name = content['name']
+    if 'localtime' in content.keys():
+        time = get_current_time(local=content['localtime'])
+    elif 'utctime' in content.keys():
+        time = get_current_time(utc=content['utctime'])
+    else:
+        time = get_current_time()
+    if name in [a[0] for a in experiences if a[1] == 'stop']:
+        return "{} alredy stoped\n".format(name), 400
+    elif name not in [a[0] for a in experiences if a[1] == 'start']:
+        return "{} did not start\n".format(name), 400
+    else:
+        experiences.append([name, 'stop', time])
+    return "Stopping {}\n".format(name), 201
+
+
+@app.route("/del_exp", methods=['POST'])
+def del_xp():
+    content = request.get_json()
+    name = content['name']
+    if name not in [a[0] for a in experiences]:
+        return "Could not find {}\n".format(name), 400
+    else:
+        res = []
+        for exp in [todel for todel in experiences if todel[0] == name]:
+            experiences.remove(exp)
+    return "Deleting {}\n".format(name), 201
+
+
+@app.route("/list_exp")
+def list_ann():
+    s = ""
+    for i in experiences:
+        s+= "{} {} at {} (UTC)\n".format(i[0], i[1], datetime.fromtimestamp(i[2][1]))
+    return s
+
+
+@app.route("/get_exp", methods=['POST'])
+def get_xp():
+    content = request.get_json()
+
+    exp = content['name']
+    if 'metric' in content.keys():
+        m = metrics[content['metric']]
+        m.update(content)
+        content = m
+
+    server = content['server'] if 'server' in content.keys() else 'default'
+
+    if exp not in [a[0] for a in experiences if a[1] == 'start']:
+        return "{} did not start".format(exp), 400
+    if exp not in [a[0] for a in experiences if a[1] == 'stop']:
+        return "{} did not stop".format(exp), 400
+    start = stop = None
+
+    for i in experiences:
+        if i[1] == 'stop' and i[0] == exp:
+            end = i[2]
+        elif i[1] == 'start' and i[0] == exp:
+            start = i[2]
+
+    for s in targets:
+        if s['server'] == server:
+            address = s["address"]
+            server_type = s["type"]
+            break
+    else:
+        return "{} not found\n".format(server), 404
+
+    if server_type.lower() == 'prometheus':
+        local_start = start[0]
+        local_end = end[0]
+        query = content['query']
+        labels = content['labels'] if 'labels' in content.keys() else None
+        step = content['step'] if 'step' in content.keys() else '1s'
+        graph_type = content['type'] if 'type' in content.keys() else 'timestamp'
+        if graph_type not in ['timestamp','duration']:
+            return "Unknown type: {} \n Only timestamp and duration type supported for Prometheus".format(graph_type), 400
+        return get_csv_from_prometheus(address, query, local_start, local_end, step, labels, graph_type)
+
+    elif server_type.lower() == 'influxdb':
+        utc_start = start[0]
+        utc_end = end[0]
+        fields = content['fields'] if 'fields' in content.keys() else None
+        measurement = content['measurement']
+        database = content['database'] if 'database' in content.keys() else 'monex'
+        graph_type = content['type'] if 'type' in content.keys() else 'timestamp'
+        if graph_type not in ['timestamp','duration','sample']:
+            return "Unknown type: {} \n Only timestamp, sample and duration type supported for InfluxDB".format(graph_type), 400
+        return get_csv_from_influxdb(address, fields, utc_start, utc_end, measurement, database, graph_type)
+    else:
+        return "Unsupported Target: {}\n".format(server_type), 404
+
+@app.route("/annotations", methods=['POST'])
+@cross_origin(max_age=600)
+def annontations():
+    content = request.get_json()
+    query = content['annotation']['query']
+    action, q = query.split(' ',1)
+    q = q[1:-1].split(',')
+    res = []
+    for i in experiences:
+        if i[1] == action and i[0] in q:
+            res.append({'annotation': query, 'time': int(1000*i[2][0]),
+                        'title': "{} {}".format(i[1],i[0]),
+                        'tags': i[0]})
+    return jsonify(res)
+
+
+if len(sys.argv) == 2:
+    parse_conf(sys.argv[1])
+    app.run(host= '0.0.0.0')
+else :
+    print("usage: monex-server config_file")

@@ -1,0 +1,143 @@
+Usage: monex-server configfile.json
+
+CONFIGURATION FILE
+
+The config file is a json file with two parts: targets and metrics. In the target
+part you targets (at least one), monex will be able to fetch data from theme.
+In the metric part, which is optional, you can sepcify custom metric for an easier
+time when you have to query it, moreover, metric specify this way can be directly
+pull with monex-draw.
+
+The option of the config file are as follow:
+
+targets:
+    server: the name of the server, use when making a query
+    type: Can be "promethes" or "influxdb"
+    address: The address of the targer, with port (eg 127.0.0.1:9090)
+
+metric:
+    name: name of the metric
+
+SERVER
+
+All the interaction with the monex-server are made by sending json data to the
+specific url.
+
+    /start_exp:
+        Start an expriment.
+        Options:
+            name: name of the expreiment, must be unique.
+            utc_time [OPTIONNAL]: start utc time of the experiment, unix timestamp.
+            local_time [OPTIONNAL]: local time of the experiment, unix timestamp.
+        Return:
+            200 if success
+            400 if the expriment alredy exist
+
+    /stop_exp:
+        End an experiment.
+        Options:
+            name: name of the expreiment, must be unique.
+            utc_time [OPTIONNAL]: start utc time of the experiment
+            local_time [OPTIONNAL]: local time of the experiment
+        Return:
+            200 if sucess
+            400 if the expriment alredy exist or is not started
+
+
+        Only one value of time can be sent (utc_time or local_time), if none is
+        specify, the current time is used.
+
+    /del_exp:
+        delete an experiment.
+        Options:
+            name: name of the expreiment, must exist.
+        Return:
+            200 if success
+            400 if the expriment not found
+
+    /list_exp
+        list the experiments.
+
+    /get_exp:
+        Options:
+            name: name of the experiment
+            type [OPTIONNAL]: timestamp, duration (time since the start of 
+                the experiment) or label (only for influxdb), default is timestanmp
+
+            [for metric specify in the conf]
+            metric: name of the metric
+
+            [for a metric in prometheus]
+            server: the name of the prometheus server
+            query: prometheus query (eg:cpu_node)
+            labels: The labels to use for naming the column, can be a single one
+                (eg: "cpu") or an array (eg: ["cpu","mode"]). In the later case,
+                the column will be name with all the labels separated by underscore.
+            step [OPTIONNAL]: step of the value, default is 1s.
+
+            [for a metric in influxdb]
+            server: the name of the influxdb server name of the experiment
+            measurement: Name of the measurement
+            fields [OPTIONNAL]: An Array of the fields to take, default is all.
+            database [OPTIONNAL]: Name of the databse, default is "monex"
+
+        Return:
+            The csv representation of the data.
+
+
+GRAFANA
+
+    Grafana can be connected on Monex-server to show the name, start time and end
+    time of the experiment. To do so you need to add Monex-server as a Data source
+    using the simple-json-datasource.
+    To have a variable listing all the experiment, you can add a variable (Templating) 
+    querying for '*'.
+    To see the start of your experiment, you have to add an annotations. For an 
+    expriment called "myxp", you will use the query "start myxp".
+    The same go for the end of an experiment with "stop myxp".
+    You can combine the variable and annotation by querying "start $myvariable".
+
+EXAMPLE:
+
+Example of configuration file:
+
+{"targets":[
+  {"server":"prom", "type":"prometheus", "address":"127.0.0.1:9090"},
+  {"server":"influx", "type":"influxdb", "address":"127.0.0.1:8086"}
+],
+"metrics":[
+  {"name":"val","server":"influx", "measurement":"foobar"}
+]}
+
+
+To start an experiment:
+
+  curl 127.0.0.1:5000/start_exp -H "Content-Type: application/json" -d \
+    '{"name":"myxp"}
+
+
+To stop an experiment at a specify time:
+
+  curl 127.1:5000/stop_exp -H "Content-Type: application/json" -d \
+    '{"name":"myxp","utctime":"1512056178"}
+
+
+To get experiment results from a prometheus:
+
+  curl 127.1:5000/get_exp -H "Content-Type: application/json" -d \
+    '{"name":"myxp","query":"irate(cpu[4s])", "server":"prom", "labels":["cpu","mode"]}'
+
+
+To get expriment results from influxdb:
+
+    curl 127.1:5000/get_exp -H "Content-Type: application/json" -d \
+        '{"name":"myxp","fields":["cgroup","io"],"server":"influx",\
+        "measurement":"ebpf", "type":"sample"}'
+
+
+To get experiment results from a value specify in the conf:
+
+    curl 127.1:5000/get_exp -H "Content-Type: application/json" -d \
+      '{"name":"myxp", "metric":"val", "type":"duration"}'
+
+
