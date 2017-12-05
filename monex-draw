@@ -86,4 +86,4 @@ if args.debug:
 Rout = subprocess.check_output(cmd)
 if args.debug:
     print("Debug from R")
-    print(Rout)
+    print(Rout.decode())

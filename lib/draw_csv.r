@@ -3,7 +3,7 @@ library(lattice)
 
 args <- commandArgs(trailingOnly=TRUE)
 datafile=args[1]
-y=gsub("-", "\\.", args[2])
+y=args[2]
 regex=args[3]
 title=args[4]
 xname=args[5]
@@ -56,7 +56,7 @@ if(y==""){
          names(dataset[,1,drop=FALSE]),
          sep=" ~ ")
 } else if(regex=="true") {
-    g = grep(y,n, value=TRUE)
+    g = grep(y,n, value=TRUE, perl=TRUE)
     f <- paste(paste(g, collapse="+"),
          names(dataset[,1,drop=FALSE]),
          sep=" ~ ")
