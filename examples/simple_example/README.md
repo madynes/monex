@@ -49,7 +49,7 @@ Let's explain the options use here:
 - Our Poremetheus query, note that we have to escape the double comma in the query.
 - The server that we define in the MonEx configuration file.
 - The type can be "duration" or "timestamp": duration will make our experiment start a time zero. Timestamp ues UNIX timestamp (at UTC time).
-- Prometheus add metadata to metrics called label, we can use the label as coulumn name: here we precise "cpu" wich is the label identifying each core, so our coulumns will be "cpu0;cpu1;cpu2...". We can have multiple labels, in that case the column names will be all of theme separtated by underscores.
+- Prometheus add labels to each metric. A label have a name and a value. For example, "cpu" and "mode" are labels of the metric "node\_cpu" with value cpu1,cpu2,cpu3... for "cpu" and idle,user,system... for "mode". We can use a label as coulumn name: here we precise "cpu" wich is the label identifying each core, so coulumns will be "cpu0;cpu1;cpu2...". We can have multiple labels, in that case the column names will be all of theme separtated by underscores.
 ## Drawing metrics
 Now that we have our csv file, we can use monex-draw to make a figure.
 ```
