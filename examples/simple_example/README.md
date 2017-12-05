@@ -1,12 +1,12 @@
 # Simple experiment
-Simple example of monex usage with Prometheus.
+Simple example of MonEx usage with Prometheus.
 
 ## Setup
 For this experiment, we want to monitor cpu usage. We will use two machines:
-- a monitoring node where we will start monex and Prometheus
+- a monitoring node where we will start MonEx and Prometheus
 - an experiment node that we want to monitor
 
-First install monex and prometheus on the monitoring node, on Debian:
+First install MonEx and prometheus on the monitoring node, on Debian:
 ```
 apt install python3-pip python3-flask python3-requests r-base prometheus
 pip3 install flask-cors
@@ -22,8 +22,8 @@ Edit the configuration file of prometheus prometheus-config.yml with the experim
 ```
 prometheus -config.file prometheus-config.yml
 ```
-Now we have prometheus in place. We only need to configure and start monex.
-Since we start monex on the same machine as Prometheus, we have to listen Prometheus on the localhost at port 9090. Check the monex-server.conf and lanch monex-server:
+Now we have prometheus in place. We only need to configure and start MonEx.
+Since we start MonEx on the same machine as Prometheus, we have to listen Prometheus on the localhost at port 9090. Check the monex-server.conf and lanch monex-server:
 ```
 ./monex-server monex-server.conf
 ```
@@ -38,7 +38,7 @@ By default, prometheus-node-exporter expose the time spend by each core in each 
 ```
 100 - irate(node_cpu{mode="idle"}[5m]) * 100
 ```
-So to get result using monex, we can use this request:
+So to get result using MonEx, we can use this request:
 ```
 curl -H "Content-Type: application/json" IP_MONITORING_NODE:MONEX_PORT \
 {"name":"stress", "query":"100 - irate(node_cpu{mode=\"idle\"}[5m]) * 100"} \
@@ -47,7 +47,7 @@ curl -H "Content-Type: application/json" IP_MONITORING_NODE:MONEX_PORT \
 We get a csv file with the data of the experiment.
 Let's explain the options use here:
 - Our Poremetheus query, note that we have to escape the double comma in the query.
-- The server that we define in the monex configuration file
+- The server that we define in the MonEx configuration file.
 - The type can be "duration" or "timestamp": duration will make our experiment start a time zero. Timestamp ues UNIX timestamp (at UTC time).
 - Prometheus add metadata to metrics called label, we can use the label as coulumn name: here we precise "cpu" wich is the label identifying each core, so our coulumns will be "cpu0;cpu1;cpu2...". We can have multiple labels, in that case the column names will be all of theme separtated by underscores.
 ## Drawing metrics

@@ -1,4 +1,4 @@
-# monex
+# MonEx
 MONitoring EXperiment
 
 ## Dependencies

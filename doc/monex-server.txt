@@ -3,7 +3,7 @@ Usage: monex-server configfile.json
 CONFIGURATION FILE
 
 The config file is a json file with two parts: targets and metrics. In the target
-part you targets (at least one), monex will be able to fetch data from theme.
+part you targets (at least one), monex-server will be able to fetch data from theme.
 In the metric part, which is optional, you can sepcify custom metric for an easier
 time when you have to query it, moreover, metric specify this way can be directly
 pull with monex-draw.
