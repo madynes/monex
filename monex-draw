@@ -20,7 +20,7 @@ parser.add_argument("-o", "--output", type=str, help="output pdf file", default=
 parser.add_argument("-t", "--title", type=str, help="write a title", default="")
 group1 = parser.add_mutually_exclusive_group(required=False)
 group1.add_argument("-c", "--columns", type=str, help="columns to draw, separated by a comma, default is all", default="")
-group1.add_argument("-r", "--grep", type=str, help="grep the colmumns to draw")
+group1.add_argument("-r", "--regex", type=str, help="grep the colmumns to draw using regex")
 parser.add_argument("-x", "--labelx", type=str, help="name of x label", default="")
 parser.add_argument("-y", "--labely", type=str, help="name of y label", default="")
 parser.add_argument("-l", "--legend", action="store_true", help="draw the legend")
@@ -58,9 +58,9 @@ else:
         temp.flush()
     csvfile = temp.name
 
-if args.grep:
+if args.regex:
     grep = True
-    columns = args.grep.replace("/","//")
+    columns = args.regex.replace("/","//")
 else:
     grep = False
     columns = args.columns.replace(',','+')
