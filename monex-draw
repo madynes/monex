@@ -18,8 +18,9 @@ parser.add_argument("--type", type=str, help="type of graph, with -s",
 
 parser.add_argument("-o", "--output", type=str, help="output pdf file", default="")
 parser.add_argument("-t", "--title", type=str, help="write a title", default="")
-parser.add_argument("-c", "--columns", type=str, help="columns to draw, separated by a comma, default is all", default="")
-parser.add_argument("-r", "--regex", action="store_true", help="support regex for column")
+group1 = parser.add_mutually_exclusive_group(required=False)
+group1.add_argument("-c", "--columns", type=str, help="columns to draw, separated by a comma, default is all", default="")
+group1.add_argument("-r", "--grep", type=str, help="grep the colmumns to draw")
 parser.add_argument("-x", "--labelx", type=str, help="name of x label", default="")
 parser.add_argument("-y", "--labely", type=str, help="name of y label", default="")
 parser.add_argument("-l", "--legend", action="store_true", help="draw the legend")
@@ -57,9 +58,11 @@ else:
         temp.flush()
     csvfile = temp.name
 
-if args.regex:
-    columns = args.columns.replace("/","//")
+if args.grep:
+    grep = True
+    columns = args.grep.replace("/","//")
 else:
+    grep = False
     columns = args.columns.replace(',','+')
 
 
@@ -67,7 +70,7 @@ cmd = ["Rscript"]
 cmd.append(os.path.dirname(__file__)+"/lib/draw_csv.r")
 cmd.append(csvfile)
 cmd.append(columns)
-cmd.append(str(args.regex).lower())
+cmd.append(str(grep).lower())
 cmd.append(args.title)
 cmd.append(args.labelx)
 cmd.append(args.labely)
