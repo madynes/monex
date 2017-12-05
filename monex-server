@@ -37,9 +37,10 @@ def get_csv_from_influxdb(server, fields, start, end, measurement, database , gr
     payload = {"epoch":"ns" ,"db":"{}".format(database),
                "q":'SELECT {} FROM "{}" WHERE time >= {}s and time <= {}s'
                .format(str_fields, measurement, start, end)}
-    print(payload)
-    data = requests.get(url, params=payload).json()
-    print(data)
+    raw_data = requests.get(url, params=payload)
+    print("Querying influxdb with:")
+    print(raw_data.url)
+    data = raw_data.json()
     columns = data['results'][0]['series'][0]['columns']
     columns[0] = graph_type
     out = ';'.join(columns)+"\n"
@@ -63,10 +64,10 @@ def get_csv_from_influxdb(server, fields, start, end, measurement, database , gr
 def get_csv_from_prometheus(server, query, start, end, step, labels, graph_type):
     url = "http://{}/api/v1/query_range".format(server)
     payload = {'query':query, 'start':start, 'end':end, 'step':step}
-    data = requests.get(url, params=payload)
+    raw_data = requests.get(url, params=payload)
     print("Querying prometheus with:")
-    print(data.url)
-    data = data.json()
+    print(raw_data.url)
+    data = raw_data.json()
     if graph_type == 'timestamp':
         s = 0
         columns = ['timestamp']
@@ -202,9 +203,9 @@ def get_xp():
     server = content['server'] if 'server' in content.keys() else 'default'
 
     if exp not in [a[0] for a in experiences if a[1] == 'start']:
-        return "{} did not start".format(exp), 400
+        return "{} did not start\n".format(exp), 400
     if exp not in [a[0] for a in experiences if a[1] == 'stop']:
-        return "{} did not stop".format(exp), 400
+        return "{} did not stop\n".format(exp), 400
     start = stop = None
 
     for i in experiences:
@@ -229,7 +230,7 @@ def get_xp():
         step = content['step'] if 'step' in content.keys() else '1s'
         graph_type = content['type'] if 'type' in content.keys() else 'timestamp'
         if graph_type not in ['timestamp','duration']:
-            return "Unknown type: {} \n Only timestamp and duration type supported for Prometheus".format(graph_type), 400
+            return "Unknown type: {} \n Only timestamp and duration type supported for Prometheus\n".format(graph_type), 400
         return get_csv_from_prometheus(address, query, local_start, local_end, step, labels, graph_type)
 
     elif server_type.lower() == 'influxdb':
@@ -240,7 +241,7 @@ def get_xp():
         database = content['database'] if 'database' in content.keys() else 'monex'
         graph_type = content['type'] if 'type' in content.keys() else 'timestamp'
         if graph_type not in ['timestamp','duration','sample']:
-            return "Unknown type: {} \n Only timestamp, sample and duration type supported for InfluxDB".format(graph_type), 400
+            return "Unknown type: {} \n Only timestamp, sample and duration type supported for InfluxDB\n".format(graph_type), 400
         return get_csv_from_influxdb(address, fields, utc_start, utc_end, measurement, database, graph_type)
     else:
         return "Unsupported Target: {}\n".format(server_type), 404
