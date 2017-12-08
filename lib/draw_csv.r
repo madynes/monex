@@ -15,6 +15,8 @@ monochrome=args[10]
 xtype=args[11]
 output=args[12]
 
+title = gsub("\\\\n","\n",title);
+
 if(output==""){
     pdf(file = "monex.pdf")
 }else{
@@ -64,5 +66,5 @@ if(y==""){
     f <- paste(y,names(dataset[,1,drop=FALSE]),sep=" ~ ")
 }
 
-xyplot(as.formula(f), data=dataset, pch=20, auto.key=l,type=type, main=title, xlab=xname, ylab=yname, cex=0.5, cex.main=1.8, cex.lab=1.8, cex.axis=1.8)
+xyplot(as.formula(f), data=dataset, pch=20, auto.key=l,type=type, main=list(title, cex=1.8), xlab=list(xname, cex=1.8), ylab=list(yname, cex=1.8), scales=list(tck=c(1,0), x=list(cex=1.5), y=list(cex=1.5)), cex=0.5)
 
