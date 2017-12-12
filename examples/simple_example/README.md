@@ -18,12 +18,12 @@ Next, on the experiment node, install prometheus-node-exporter, curl and stress:
 apt install prometheus-node-exporter curl stress
 ```
 By default, prometheus-node-exporter expose metrics to the port 9100.
-Edit the configuration file of prometheus prometheus-config.yml with the experiment node address (with port 9100) and start prometheus on the monitoring node.
+Edit the configuration file of prometheus "prometheus-config.yml" with the experiment node address (with port 9100) and start prometheus on the monitoring node.
 ```
 prometheus -config.file prometheus-config.yml
 ```
 Now we have prometheus in place. We only need to configure and start MonEx.
-Since we start MonEx on the same machine as Prometheus, we have to listen Prometheus on the localhost at port 9090. Check the monex-server.conf and lanch monex-server:
+Since we start MonEx on the same machine as Prometheus, we have to listen Prometheus on the localhost at port 9090. Check the monex-server.conf and launch monex-server:
 ```
 ./monex-server monex-server.conf
 ```
@@ -46,10 +46,10 @@ curl -H "Content-Type: application/json" IP_MONITORING_NODE:MONEX_PORT \
 ```
 We get a csv file with the data of the experiment.
 Let's explain the options use here:
-- Our Poremetheus query, note that we have to escape the double comma in the query.
-- The server that we define in the MonEx configuration file.
-- The type can be "duration" or "timestamp": duration will make our experiment start a time zero. Timestamp ues UNIX timestamp (at UTC time).
-- Prometheus add labels to each metric. A label have a name and a value. For example, "cpu" and "mode" are labels of the metric "node\_cpu" with value cpu1,cpu2,cpu3... for "cpu" and idle,user,system... for "mode". We can use a label as coulumn name: here we precise "cpu" wich is the label identifying each core, so coulumns will be "cpu0;cpu1;cpu2...". We can have multiple labels, in that case the column names will be all of theme separtated by underscores.
+- Query: Our Poremetheus query, note that we have to escape the double quotes in the query.
+- Server: We define it in the MonEx configuration file.
+- type: Can be "duration" or "timestamp": duration will make our experiment start a time zero. Timestamp ues UNIX timestamp (at UTC time).
+- labels: Prometheus add labels to each metric. A label have a name and a value. For example, "cpu" and "mode" are labels of the metric "node\_cpu" with value cpu1,cpu2,cpu3... for "cpu" and idle,user,system... for "mode". We can use a label as coulumn name: here we precise "cpu" wich is the label identifying each core, so coulumns will be named "cpu0;cpu1;cpu2...". We can have multiple labels, in that case the column names will be all the labels separtated by underscores.
 ## Drawing metrics
 Now that we have our csv file, we can use monex-draw to make a figure.
 ```
