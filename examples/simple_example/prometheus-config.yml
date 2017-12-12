@@ -7,6 +7,6 @@ scrape_configs:
       scrape_interval: 1s
 
       static_configs:
-        -targets: ['ip:port']
-         labels:
+        - targets: ['ip:port']
+          labels:
             groups: 'monex_test'

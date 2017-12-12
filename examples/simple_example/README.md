@@ -40,9 +40,9 @@ By default, prometheus-node-exporter expose the time spend by each core in each 
 ```
 So to get result using MonEx, we can use this request:
 ```
-curl -H "Content-Type: application/json" IP_MONITORING_NODE:MONEX_PORT \
-{"name":"stress", "query":"100 - irate(node_cpu{mode=\"idle\"}[5m]) * 100"} \
-"server":"prom","type":"duration","labels":["cpu"]} > mydata.csv
+curl -H "Content-Type: application/json" IP_MONITORING_NODE:MONEX_PORT/get_exp \
+-d '{"name":"stress", "query":"100 - irate(node_cpu{mode=\"idle\"}[5m]) * 100", \
+"server":"prom","type":"duration","labels":["cpu"]}' > mydata.csv
 ```
 We get a csv file with the data of the experiment.
 Let's explain the options use here:
