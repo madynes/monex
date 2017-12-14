@@ -14,6 +14,9 @@ apt install python3-pip python3-flask python3-requests r-base
 pip3 install flask-cors
 ```
 ## First steps
+
+You can start by doing the [tutorial](examples/simple_example/).
+
 ### Starting monex-server
 To start the monex-server, you will need a configuration file with the targets from where to get metrics. For example, if we want to listen for a Prometheus server on the port 9090 of the localhost, the configuration file will look lke that:
 ```
@@ -38,3 +41,5 @@ The monex-draw tool can be use to draw metrics from a csv file. For example to d
 ```
 monex-draw -f metric.csv -x 'my x label' -y 'my y label' -t 'my title'
 ```
+
+You can find the complete docuementation of monex-server [here](doc/monex-server.txt).
