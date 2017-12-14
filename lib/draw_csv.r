@@ -59,9 +59,6 @@ if(xtype=="timestamp"){
     dataset$timestamp = as.POSIXct(dataset$time, origin="1970-01-01")
 }
 
-print(regex)
-print(y)
-print(y2)
 n = names(dataset[,-1,drop=FALSE])
 if(y==""){
     f <- paste(paste(n, collapse="+"),
@@ -78,7 +75,6 @@ if(y==""){
 
 if(datafile2 != ""){
 
-    print("doing 2")
     dataset2 <- read.csv(datafile2, header=TRUE, sep=";")
 
     if(xtype=="timestamp"){
@@ -87,18 +83,15 @@ if(datafile2 != ""){
 
     n2 = names(dataset2[,-1,drop=FALSE])
     if(y2==""){
-        print("doing y2")
         f2 <- paste(paste(n2, collapse="+"),
              names(dataset2[,1,drop=FALSE]),
              sep=" ~ ")
     } else if(grepl("2", regex)) {
-        print("regex2")
         g2 = grep(y2,n2, value=TRUE, perl=TRUE)
         f2 <- paste(paste(g2, collapse="+"),
              names(dataset2[,1,drop=FALSE]),
              sep=" ~ ")
     }else{
-        print("doing all")
         f2 <- paste(y2,names(dataset2[,1,drop=FALSE]),sep=" ~ ")
     }
 }
