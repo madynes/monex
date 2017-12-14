@@ -6,11 +6,11 @@ MONitoring EXperiment
 - python3-flask
 - python3-requests
 - python3-flask-cors
-- R
+- R with lattice and latticeExtra
 
 This should do the trick on Debian:
 ```
-apt install python3-pip python3-flask python3-requests r-base
+apt install python3-pip python3-flask python3-requests r-base r-cran-latticeextra
 pip3 install flask-cors
 ```
 ## First steps

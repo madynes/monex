@@ -11,6 +11,7 @@ parser = argparse.ArgumentParser(prog="draw")
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument("-f", "--file", type=str, help="fetching from csv file (- for stdin)")
 group.add_argument("-s", "--server", type=str, help="fetching from monex server (eg:127.0.0.1:5000)")
+parser.add_argument("-f2", "--file2", type=str, help="fetching from csv as second source, drawing another axe")
 parser.add_argument("--exp", type=str, help="name of expriment, with -s")
 parser.add_argument("--metric", type=str, help="name of the metric (must be in monex conf), with -s")
 parser.add_argument("--type", type=str, help="type of graph, with -s",
@@ -19,10 +20,14 @@ parser.add_argument("--type", type=str, help="type of graph, with -s",
 parser.add_argument("-o", "--output", type=str, help="output pdf file", default="")
 parser.add_argument("-t", "--title", type=str, help="write a title", default="")
 group1 = parser.add_mutually_exclusive_group(required=False)
+group2 = parser.add_mutually_exclusive_group(required=False)
 group1.add_argument("-c", "--columns", type=str, help="columns to draw, separated by a comma, default is all", default="")
-group1.add_argument("-r", "--regex", type=str, help="grep the colmumns to draw using regex")
+group2.add_argument("-c2", "--columns2", type=str, help="columns to draw, for second source", default="")
+group1.add_argument("-r", "--regex", type=str, help="grep the colmumns to draw using regex", default="")
+group2.add_argument("-r2", "--regex2", type=str, help="grep the colmumns to draw using regex, for second source", default="")
 parser.add_argument("-x", "--labelx", type=str, help="name of x label", default="")
 parser.add_argument("-y", "--labely", type=str, help="name of y label", default="")
+parser.add_argument("-y2", "--labely2", type=str, help="name of y2 label", default="")
 parser.add_argument("-l", "--legend", action="store_true", help="draw the legend")
 parser.add_argument("-g", "--grid", action="store_true", help="draw the grid")
 parser.add_argument("-n", "--nocolor", action="store_true", help="draw in greysale")
@@ -46,6 +51,7 @@ else:
         print("--exp must be specify when fetching data from server")
         exit(1)
 
+
     if not args.metric:
         print("--metric must be specify when fetching data from server")
         exit(1)
@@ -58,22 +64,38 @@ else:
         temp.flush()
     csvfile = temp.name
 
+csvfile2=""
+if args.file2:
+    if(os.path.isfile(args.file2)):
+        csvfile2 = args.file2
+    else:
+        print("Can't find the second csv file {}".format(args.file))
+        exit(1)
+
+grep = ""
 if args.regex:
-    grep = True
+    grep += "1"
     columns = args.regex.replace("/","//")
 else:
-    grep = False
     columns = args.columns.replace(',','+')
 
+if args.regex2:
+    grep += "2"
+    columns2 = args.regex2.replace("/","//")
+else:
+    columns2 = args.columns2.replace(',','+')
 
 cmd = ["Rscript"]
 cmd.append(os.path.dirname(__file__)+"/lib/draw_csv.r")
 cmd.append(csvfile)
+cmd.append(csvfile2)
 cmd.append(columns)
-cmd.append(str(grep).lower())
+cmd.append(columns2)
+cmd.append(grep)
 cmd.append(args.title)
 cmd.append(args.labelx)
 cmd.append(args.labely)
+cmd.append(args.labely2)
 cmd.append(str(args.point).lower())
 cmd.append(str(args.grid).lower())
 cmd.append(str(args.legend).lower())
