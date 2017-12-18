@@ -3,7 +3,7 @@
 from flask import Flask, jsonify, request, Response, make_response
 from flask_cors import CORS, cross_origin
 from datetime import datetime
-import requests, sys, json, math, csv, io
+import requests, sys, json, math, csv, io, argparse
 
 app = Flask(__name__)
 
@@ -269,8 +269,11 @@ def annontations():
     return jsonify(res)
 
 
-if len(sys.argv) == 2:
-    parse_conf(sys.argv[1])
-    app.run(host= '0.0.0.0')
-else :
-    print("usage: monex-server config_file")
+parser = argparse.ArgumentParser(prog="monex-server")
+parser.add_argument("configuration", type= str,
+    help="Configuration file")
+parser.add_argument("-p", "--port", type= int, default=5000,
+    help="Configuration file")
+args = parser.parse_args()
+
+app.run(host= '0.0.0.0', port=args.port)
