@@ -29,9 +29,11 @@ parser.add_argument("-x", "--labelx", type=str, help="name of x label", default=
 parser.add_argument("-y", "--labely", type=str, help="name of y label", default="")
 parser.add_argument("-y2", "--labely2", type=str, help="name of y2 label", default="")
 parser.add_argument("-l", "--legend", action="store_true", help="draw the legend")
+parser.add_argument("-l2", "--legend2", type=str, default="", help="Only with two Y axes, control how each source should appear in the legend, separated by a comma")
 parser.add_argument("-g", "--grid", action="store_true", help="draw the grid")
 parser.add_argument("-n", "--nocolor", action="store_true", help="draw in greysale")
 parser.add_argument("-p", "--point", action="store_true", help="draw scaterplot graph")
+parser.add_argument("-z", "--zero", action="store_true", help="draw zero-based graph")
 parser.add_argument("--debug", action="store_true", help="print debug message")
 
 args = parser.parse_args()
@@ -85,6 +87,11 @@ if args.regex2:
 else:
     columns2 = args.columns2.replace(',','+')
 
+if args.legend2:
+    yleg1,yleg2 = args.legend2.split(',')
+else:
+    yleg1 = yleg2 = 'false'
+
 cmd = ["Rscript"]
 cmd.append(os.path.dirname(__file__)+"/lib/draw_csv.r")
 cmd.append(csvfile)
@@ -96,9 +103,12 @@ cmd.append(args.title)
 cmd.append(args.labelx)
 cmd.append(args.labely)
 cmd.append(args.labely2)
+cmd.append(yleg1)
+cmd.append(yleg2)
 cmd.append(str(args.point).lower())
 cmd.append(str(args.grid).lower())
 cmd.append(str(args.legend).lower())
+cmd.append(str(args.zero).lower())
 cmd.append(str(args.nocolor).lower())
 cmd.append(args.type)
 cmd.append(args.output)
@@ -107,5 +117,5 @@ if args.debug:
     print("Command: {}".format(' '.join(cmd)))
 Rout = subprocess.check_output(cmd)
 if args.debug:
-    print("Debug from R")
+    print("Debug from R:")
     print(Rout.decode())
