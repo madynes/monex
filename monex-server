@@ -140,13 +140,12 @@ def query():
     return jsonify({})
 
 
-@app.route("/start_exp", methods=['POST'])
-def start_xp():
+@app.route("/exp/<name>", methods=['POST'])
+def start_xp(name):
     content = request.get_json()
-    name = content['name']
-    if 'localtime' in content.keys():
+    if content and 'localtime' in content.keys():
         time = get_current_time(local=content['localtime'])
-    elif 'utctime' in content.keys():
+    elif content and 'utctime' in content.keys():
         time = get_current_time(utc=content['utctime'])
     else:
         time = get_current_time()
@@ -157,13 +156,12 @@ def start_xp():
     return "Starting {}\n".format(name), 201
 
 
-@app.route("/stop_exp", methods=['POST'])
-def stop_xp():
+@app.route("/exp/<name>", methods=['PUT'])
+def stop_xp(name):
     content = request.get_json()
-    name = content['name']
-    if 'localtime' in content.keys():
+    if content and 'localtime' in content.keys():
         time = get_current_time(local=content['localtime'])
-    elif 'utctime' in content.keys():
+    elif content and 'utctime' in content.keys():
         time = get_current_time(utc=content['utctime'])
     else:
         time = get_current_time()
@@ -176,10 +174,8 @@ def stop_xp():
     return "Stopping {}\n".format(name), 201
 
 
-@app.route("/del_exp", methods=['POST'])
-def del_xp():
-    content = request.get_json()
-    name = content['name']
+@app.route("/exp/<name>", methods=['DELETE'])
+def del_xp(name):
     if name not in [a[0] for a in experiences]:
         return "Could not find {}\n".format(name), 400
     else:
@@ -189,23 +185,31 @@ def del_xp():
     return "Deleting {}\n".format(name), 201
 
 
-@app.route("/list_exp")
+@app.route("/exp/", methods=['GET'])
 def list_ann():
     s = ""
     for i in experiences:
         s+= "{} {} at {} (UTC)\n".format(i[0], i[1], datetime.fromtimestamp(i[2][1]))
-    return s
+    output = make_response(s)
+    output.headers["Content-type"] = "text/plain"
+    return output
 
 
-@app.route("/get_exp", methods=['POST'])
-def get_xp():
+@app.route("/exp/<name>", methods=['GET'])
+def get_xp(name):
     content = request.get_json()
+    if not content:
+        return "Error: The server didn't recieve any JSON data\n", 400
 
-    exp = content['name']
+
+    exp = name
     if 'metric' in content.keys():
-        m = metrics[content['metric']]
-        m.update(content)
-        content = m
+        if content['metric'] in metrics:
+            m = metrics[content['metric']]
+            m.update(content)
+            content = m
+        else:
+            return "Error: metric {} not found\n".format(content['metric']), 404
 
     server = content['server'] if 'server' in content.keys() else 'default'
 

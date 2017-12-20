@@ -27,11 +27,11 @@ Since we start MonEx on the same machine as Prometheus, we have to listen Promet
 ```
 ./monex-server monex-server.conf
 ```
-The default port for monex is 5000.
+For the rest of the example, we will assume that monex-server runs on the address 1.2.3.4 at the port 5000 (The default port for monex-server).
 ## Starting the experiment
 To start the experiment, we just need to send a message to the monex-server. We can use a script to manage that. start\_xp.sh does just that, it start an experiment called "stress", stress the cpu and at the end stop the experiment. So from the experiment node, lauch the script with the address of the monitoring node:
 ```
-sh start_xp.sh IP_MONITORING_NODE:MONEX_PORT
+sh start_xp.sh 1.2.3.4:5000
 ```
 ## Getting metrics
 By default, prometheus-node-exporter expose the time spend by each core in each mode the "node\_cpu" metric. To get the cpu usage, we have to make a query using prometheus (<https://www.robustperception.io/understanding-machine-cpu-usage/>). If we want the usage per core, the query should be:
@@ -40,8 +40,8 @@ By default, prometheus-node-exporter expose the time spend by each core in each 
 ```
 So to get result using MonEx, we can use this request:
 ```
-curl -H "Content-Type: application/json" IP_MONITORING_NODE:MONEX_PORT/get_exp \
--d '{"name":"stress", "query":"100 - irate(node_cpu{mode=\"idle\"}[5m]) * 100", \
+curl -X GET -H "Content-Type: application/json" 1.2.3.4:5000/exp/stress \
+-d '{"query":"100 - irate(node_cpu{mode=\"idle\"}[5m]) * 100", \
 "server":"prom","type":"duration","labels":["cpu"]}' > mydata.csv
 ```
 We get a csv file with the data of the experiment.

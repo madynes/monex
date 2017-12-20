@@ -24,20 +24,20 @@ To start the monex-server, you will need a configuration file with the targets f
 ```
 By default, monex-server listen on port 5000.
 ### Start and end experiments
-To start or end experiments, we send json data with the name of the experiment to monex-server at /start\_exp or stop\_exp. For example, to start an expriment called "myexp" with monex-server running on the port 5000 of the localhost, we can ues the curl command:
+To start or end experiments, we send a POST or PUT request to monex-server at exp/\<XP\_NAME\>. For example, to start an expriment called "myexp" with monex-server running on the port 5000 of the localhost, we can ues the curl command:
 ```
-curl 127.1:5000/start_exp -H "Content-Type: application/json" -d '{"name":"myxp"}
+curl -X POST 127.1:5000/exp/myexp
 ```
 ### Getting metrics
-To get metrics, we send json data with the name of the experiment, the target server and the metric that we want to get to monex-server at /get\_exp. The way to get the metric depend of the target use (Prometheus or InfluxDB). For example, if we want to get the cpu usage metric from a prometheus target, we can use the curl command:
+To get metrics, we send a GET request with json data to the same url. The json data contain the target server and the metric that we want. The way to get the metric depend of the target use (Prometheus or InfluxDB). For example, if we want to get the cpu usage metric from a prometheus target, we can use the curl command:
 ```
-curl 127.1:5000/get_exp -H "Content-Type: application/json" -d '{"name":"myxp","query":"irate(node_cpu[4s])", "server":"prom"}' > metric.csv
+curl -X GET 127.1:5000/exp/myexp -H "Content-Type: application/json" -d '{"query":"irate(node_cpu[4s])", "server":"prom"}' > metric.csv
 ```
-The server return data as semi-colon separated value (almost csv).
+
 ### Drawing metrics
 The monex-draw tool can be use to draw metrics from a csv file. For example to draw from a metric.csv file, we can use:
 ```
-monex-draw -f metric.csv -x 'my x label' -y 'my y label' -t 'my title'
+monex-draw -F metric.csv -x 'my x label' -y 'my y label' -t 'my title'
 ```
 
 You can find the complete documentation of monex-server [here](doc/monex-server.txt).

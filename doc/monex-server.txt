@@ -21,55 +21,59 @@ metric:
 SERVER
 
 All the interaction with the monex-server are made by sending json data to the
-specific url.
+specific url with different HTTP Methode.
 
-    /start_exp:
-        Start an expriment.
+    POST /exp/<XPNAME>:
+        Start the experiment
+
         Options:
-            name: name of the expreiment, must be unique.
             utc_time [OPTIONNAL]: start utc time of the experiment, unix timestamp.
             local_time [OPTIONNAL]: local time of the experiment, unix timestamp.
+
+            Only one value of time can be sent (utc_time or local_time), if none is
+            specify, the current time is used.
+
         Return:
             200 if success
             400 if the expriment alredy exist
 
-    /stop_exp:
+    PUT /exp/<XPNAME>:
         End an experiment.
+
         Options:
-            name: name of the expreiment, must be unique.
-            utc_time [OPTIONNAL]: start utc time of the experiment
-            local_time [OPTIONNAL]: local time of the experiment
+            utc_time [OPTIONNAL]: utc time of the end of the experiment
+            local_time [OPTIONNAL]: local time of the end of theexperiment
+
+            Only one value of time can be sent (utc_time or local_time), if none is
+            specify, the current time is used.
+
         Return:
             200 if sucess
             400 if the expriment alredy exist or is not started
 
-
-        Only one value of time can be sent (utc_time or local_time), if none is
-        specify, the current time is used.
-
-    /del_exp:
+    DELETE /exp/<XPNAME>:
         delete an experiment.
-        Options:
-            name: name of the expreiment, must exist.
+
         Return:
             200 if success
             400 if the expriment not found
 
-    /list_exp
-        list the experiments.
+    GET /exp
+        list all the experiments name and start/end time.
 
-    /get_exp:
+    GET /exp/<XPNAME>:
+        Return a csv with experiment results
+
         Options:
-            name: name of the experiment
             type [OPTIONNAL]: timestamp, duration (time since the start of 
                 the experiment) or label (only for influxdb), default is timestanmp
 
-            [for metric specify in the conf]
+            [for metric specify in the configuration file]
             metric: name of the metric
 
             [for a metric in prometheus]
-            server: the name of the prometheus server
-            query: prometheus query (eg:cpu_node)
+            server: the name of the prometheus server (as in the configuration file)
+            query: prometheus query (eg: rate(cpu_node[10s]))
             labels: The labels to use for naming the column, can be a single one
                 (eg: "cpu") or an array (eg: ["cpu","mode"]). In the later case,
                 the column will be name with all the labels separated by underscore.
@@ -81,6 +85,7 @@ specific url.
             fields [OPTIONNAL]: An Array of the fields to take, default is all.
             database [OPTIONNAL]: Name of the databse, default is "monex"
 
+            By default, the server name "default" is selected.
         Return:
             The csv representation of the data.
 
@@ -112,32 +117,27 @@ Example of configuration file:
 
 To start an experiment:
 
-  curl 127.0.0.1:5000/start_exp -H "Content-Type: application/json" -d \
-    '{"name":"myxp"}
-
+  curl -X POST 127.0.0.1:5000/exp/myxp
 
 To stop an experiment at a specify time:
 
-  curl 127.1:5000/stop_exp -H "Content-Type: application/json" -d \
-    '{"name":"myxp","utctime":"1512056178"}
-
+  curl -X PUT 127.1:5000/exp/myxp -H "Content-Type: application/json" -d \
+    '{"utctime":"1512056178"}
 
 To get experiment results from a prometheus:
 
-  curl 127.1:5000/get_exp -H "Content-Type: application/json" -d \
-    '{"name":"myxp","query":"irate(cpu[4s])", "server":"prom", "labels":["cpu","mode"]}'
-
+  curl -X GET 127.1:5000/exp/myxp -H "Content-Type: application/json" -d \
+    '{"query":"irate(cpu[4s])", "server":"prom", "labels":["cpu","mode"]}'
 
 To get expriment results from influxdb:
 
-    curl 127.1:5000/get_exp -H "Content-Type: application/json" -d \
-        '{"name":"myxp","fields":["cgroup","io"],"server":"influx",\
+    curl X GET 127.1:5000/exp/myxp -H "Content-Type: application/json" -d \
+        '{"fields":["cgroup","io"],"server":"influx",\
         "measurement":"ebpf", "type":"sample"}'
-
 
 To get experiment results from a value specify in the conf:
 
-    curl 127.1:5000/get_exp -H "Content-Type: application/json" -d \
-      '{"name":"myxp", "metric":"val", "type":"duration"}'
+    curl -X GET 127.1:5000/exp/myxp -H "Content-Type: application/json" -d \
+      '{"metric":"val", "type":"duration"}'
 
 

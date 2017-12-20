@@ -58,8 +58,8 @@ else:
         print("--metric must be specify when fetching data from server")
         exit(1)
 
-    payload = {"name":args.exp, "metric":args.metric, "type":args.type}
-    r = requests.post("http://{}/get_exp".format(args.server), json=payload)
+    payload = {"metric":args.metric, "type":args.type}
+    r = requests.get("http://{}/exp/{}".format(args.server, args.exp), json=payload)
     temp = tempfile.NamedTemporaryFile()
     if r.status_code == 200:
         temp.write(r.content)
