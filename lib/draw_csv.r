@@ -35,14 +35,6 @@ if(output==""){
 if(monochrome=="true"){
     lattice.options(default.theme = standard.theme(color = FALSE))
 }
-if(yleg2!="false"){
-    if(scater=="true") {
-        leg2 = list(space="right", text=list(c('',yleg1, yleg2)), points=list(col=c("white","black","black"), pch=c(0,1,5)))
-    } else {
-        leg2 = list(space="right", text=list(c('',yleg1, yleg2)), lines=list(col=c("black","black","black"), lty=c(0,1,5)))}
-} else {
-    leg2 = NULL
-}
 
 
 if(grid=="true"){
@@ -66,9 +58,9 @@ if(zero=='true'){
 if(legend=="false"){
     l = FALSE
 } else if(scater=="true") {
-    l = list(space='right', lines=F, points=T)
+    l = list(space='bottom', lines=F, points=T, columns=3)
 } else {
-    l = list(space='right', lines=T, points=F)
+    l = list(space='bottom', lines=T, points=F, columns=3)
 }
 
 dataset <- read.csv(datafile, header=TRUE, sep=sep)
@@ -117,9 +109,9 @@ if(datafile2 != ""){
 if (datafile2 == ""){
     xyplot(as.formula(f), data=dataset, pch=20, auto.key=l,type=type, main=list(title, cex=1.8), xlab=list(xname, cex=1.8), ylab=list(yname, cex=1.8), scales=list(tck=c(1,0), x=list(cex=1.5), y=list(cex=1.5, rot=90)), cex=0.5, ylim=lim)
 } else  {
-    a = xyplot(as.formula(f), data=dataset, pch=19, auto.key=l,type=type, main=list(title, cex=1.8), xlab=list(xname, cex=1.4), ylab=list(yname, cex=1.4), ylab.right=list(y2name, cex=1.4), cex=0.5, scales=list(tck=c(1,0), x=list(cex=1.5), y=list(cex=1.5, rot=90)), ylim=lim)
-    b = xyplot(as.formula(f2), data=dataset2, pch=5, lty=5, key=leg2, type=type, cex=0.5, scales=list(x=list(cex=1.5), y=list(cex=1.5, rot=90)), ylim=lim)
-
-    doubleYScale(a, b, use.style=F, scales=list(tck=c(1,0), x=list(cex=1.5), y=list(cex=1.5, rot=90)), cex=0.5)
-
+    attach(mtcars)
+    p1 <- xyplot(as.formula(f), data=dataset, pch=20, auto.key=l,type=type, main=list(title, cex=1.8), xlab=NULL, ylab=list(yname, cex=1.8), scales=list(tck=c(1,0), x=list(cex=0), y=list(cex=1.5, rot=90)), cex=0.5, ylim=lim)
+    p2 <- xyplot(as.formula(f2), data=dataset2, pch=20, type=type, main=list(title, cex=1.8), xlab=list(xname, cex=1.8), ylab=list(y2name, cex=1.8), scales=list(tck=c(1,0), x=list(cex=1.5), y=list(cex=1.5, rot=90)), cex=0.5, ylim=lim)
+    print(p1, split=c(1,1,1,2), more=T)
+    print(p2, split=c(1,2,1,2))
 }
