@@ -21,9 +21,10 @@ legend=args[14]
 zero=args[15]
 monochrome=args[16]
 xtype=args[17]
-output=args[18]
+sep=args[18]
+output=args[19]
 
-title = gsub("\\\\n","\n",title);
+title = gsub("\\\\n","\n",title)
 
 if(output==""){
     pdf(file = "monex.pdf")
@@ -70,7 +71,7 @@ if(legend=="false"){
     l = list(space='right', lines=T, points=F)
 }
 
-dataset <- read.csv(datafile, header=TRUE, sep=";")
+dataset <- read.csv(datafile, header=TRUE, sep=sep)
 
 if(xtype=="timestamp"){
     dataset$timestamp = as.POSIXct(dataset$time, origin="1970-01-01")
@@ -92,7 +93,7 @@ if(y==""){
 
 if(datafile2 != ""){
 
-    dataset2 <- read.csv(datafile2, header=TRUE, sep=";")
+    dataset2 <- read.csv(datafile2, header=TRUE, sep=sep)
 
     if(xtype=="timestamp"){
         dataset2$timestamp = as.POSIXct(dataset2$time, origin="1970-01-01")

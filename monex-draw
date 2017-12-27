@@ -9,9 +9,9 @@ import tempfile
 
 parser = argparse.ArgumentParser(prog="draw")
 group = parser.add_mutually_exclusive_group(required=True)
-group.add_argument("-f", "--file", type=str, help="fetching from csv file (- for stdin)")
-group.add_argument("-s", "--server", type=str, help="fetching from monex server (eg:127.0.0.1:5000)")
-parser.add_argument("-f2", "--file2", type=str, help="fetching from csv as second source, drawing another axe")
+group.add_argument("-F", "--file", type=str, help="fetching from csv file (- for stdin)")
+group.add_argument("-S", "--server", type=str, help="fetching from monex server (eg:127.0.0.1:5000)")
+parser.add_argument("-F2", "--file2", type=str, help="fetching from csv as second source, drawing another axe")
 parser.add_argument("--exp", type=str, help="name of expriment, with -s")
 parser.add_argument("--metric", type=str, help="name of the metric (must be in monex conf), with -s")
 parser.add_argument("--type", type=str, help="type of graph, with -s",
@@ -34,6 +34,7 @@ parser.add_argument("-g", "--grid", action="store_true", help="draw the grid")
 parser.add_argument("-n", "--nocolor", action="store_true", help="draw in greysale")
 parser.add_argument("-p", "--point", action="store_true", help="draw scaterplot graph")
 parser.add_argument("-z", "--zero", action="store_true", help="draw zero-based graph")
+parser.add_argument("-s", "--sep", type=str, default=",", help="separator (default is comma)")
 parser.add_argument("--debug", action="store_true", help="print debug message")
 
 args = parser.parse_args()
@@ -111,6 +112,7 @@ cmd.append(str(args.legend).lower())
 cmd.append(str(args.zero).lower())
 cmd.append(str(args.nocolor).lower())
 cmd.append(args.type)
+cmd.append(args.sep)
 cmd.append(args.output)
 
 if args.debug:
