@@ -1,7 +1,5 @@
 
 library(lattice)
-library(RColorBrewer)
-library(latticeExtra)
 
 args <- commandArgs(trailingOnly=TRUE)
 datafile=args[1]
