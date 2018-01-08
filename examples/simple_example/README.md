@@ -8,7 +8,7 @@ For this experiment, we want to monitor cpu usage. We will use two machines:
 
 First install MonEx and prometheus on the monitoring node, on Debian:
 ```
-apt install python3-pip python3-flask python3-requests r-base r-cran-latticeextra prometheus
+apt install python3-pip python3-flask python3-requests r-base prometheus
 pip3 install flask-cors
 systemctl stop prometheus
 git clone https://github.com/madynes/monex.git
