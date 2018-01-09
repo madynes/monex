@@ -1,1 +1,0 @@
-monex-draw -F data.csv -y "Completion" -x "Time (sec)" -s ';' -n

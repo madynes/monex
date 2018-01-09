@@ -1,1 +1,0 @@
-./monex-draw -F2 data_pdu.csv  -F data_hdd.csv -c node1,node2,node3 -c2 node1,node2,node3 -x "Time (sec)" -y "Disk utilization (%)" -y2 "Power usage (W)" -l
