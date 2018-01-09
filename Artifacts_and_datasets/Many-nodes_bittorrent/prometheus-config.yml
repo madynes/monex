@@ -1,0 +1,15 @@
+# Sample config for Prometheus.
+
+global:
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+  evaluation_interval: 15s # By default, scrape targets every 15 seconds.
+
+scrape_configs:
+  - job_name: 'prometheus'
+
+    scrape_interval: 5s
+    scrape_timeout: 5s
+
+    static_configs:
+        - targets: ['peer00-vadm:8000','peer01-vadm:8000','peer02-vadm:8000', 'peer03-vadm:8000','peer04-vadm:8000','peer05-vadm:8000','peer06-vadm:8000','peer07-vadm:8000','peer08-vadm:8000', 'peer09-vadm:8000','peer10-vadm:8000', 'peer11-vadm:8000', 'peer12-vadm:8000', 'peer13-vadm:8000', 'peer14-vadm:8000', 'peer15-vadm:8000', 'peer16-vadm:8000', 'peer17-vadm:8000', 'peer18-vadm:8000', 'peer19-vadm:8000', 'peer20-vadm:8000', 'peer21-vadm:8000', 'peer22-vadm:8000', 'peer23-vadm:8000', 'peer24-vadm:8000', 'peer25-vadm:8000', 'peer26-vadm:8000', 'peer27-vadm:8000', 'peer28-vadm:8000', 'peer29-vadm:8000', 'peer30-vadm:8000', 'peer31-vadm:8000', 'peer32-vadm:8000', 'peer33-vadm:8000', 'peer34-vadm:8000', 'peer35-vadm:8000', 'peer36-vadm:8000', 'peer37-vadm:8000', 'peer38-vadm:8000', 'peer39-vadm:8000', 'peer40-vadm:8000', 'peer41-vadm:8000', 'peer42-vadm:8000', 'peer43-vadm:8000', 'peer44-vadm:8000', 'peer45-vadm:8000', 'peer46-vadm:8000', 'peer47-vadm:8000', 'peer48-vadm:8000', 'peer49-vadm:8000', 'peer50-vadm:8000', 'peer51-vadm:8000', 'peer52-vadm:8000', 'peer53-vadm:8000', 'peer54-vadm:8000', 'peer55-vadm:8000', 'peer56-vadm:8000', 'peer57-vadm:8000', 'peer58-vadm:8000', 'peer59-vadm:8000', 'peer60-vadm:8000', 'peer61-vadm:8000', 'peer62-vadm:8000', 'peer63-vadm:8000', 'peer64-vadm:8000', 'peer65-vadm:8000', 'peer66-vadm:8000', 'peer67-vadm:8000', 'peer68-vadm:8000', 'peer69-vadm:8000', 'peer70-vadm:8000', 'peer71-vadm:8000', 'peer72-vadm:8000', 'peer73-vadm:8000', 'peer74-vadm:8000', 'peer75-vadm:8000', 'peer76-vadm:8000', 'peer77-vadm:8000', 'peer78-vadm:8000', 'peer79-vadm:8000', 'peer80-vadm:8000', 'peer81-vadm:8000', 'peer82-vadm:8000', 'peer83-vadm:8000', 'peer84-vadm:8000', 'peer85-vadm:8000', 'peer86-vadm:8000', 'peer87-vadm:8000', 'peer88-vadm:8000', 'peer89-vadm:8000', 'peer90-vadm:8000', 'peer91-vadm:8000', 'peer92-vadm:8000', 'peer93-vadm:8000', 'peer94-vadm:8000', 'peer95-vadm:8000', 'peer96-vadm:8000', 'peer97-vadm:8000', 'peer98-vadm:8000', 'peer99-vadm:8000']
+
