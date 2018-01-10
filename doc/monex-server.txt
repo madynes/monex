@@ -122,7 +122,7 @@ To start an experiment:
 To stop an experiment at a specify time:
 
   curl -X PUT 127.1:5000/exp/myxp -H "Content-Type: application/json" -d \
-    '{"utctime":"1512056178"}
+    '{"utctime":"1512056178"}'
 
 To get experiment results from a prometheus:
 
@@ -131,7 +131,7 @@ To get experiment results from a prometheus:
 
 To get expriment results from influxdb:
 
-    curl X GET 127.1:5000/exp/myxp -H "Content-Type: application/json" -d \
+    curl -X GET 127.1:5000/exp/myxp -H "Content-Type: application/json" -d \
         '{"fields":["cgroup","io"],"server":"influx",\
         "measurement":"ebpf", "type":"sample"}'
 
