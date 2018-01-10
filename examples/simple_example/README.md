@@ -40,7 +40,7 @@ prometheus -config.file prometheus-config.yml
 Now we have prometheus in place. We only need to configure and start MonEx.
 Since we start MonEx on the same machine as Prometheus, we have to listen Prometheus on the localhost at port 9090. Check the monex-server.conf and launch monex-server:
 ```
-./monex-server monex-server.conf
+./monex-server monex-server-defaault.conf
 ```
 For the rest of the example, we will assume that monex-server runs on the address 1.2.3.4 at the port 5000 (The default port for monex-server).
 ## Starting the experiment
@@ -57,7 +57,7 @@ So to get result using MonEx, we can use this request:
 ```
 curl -X GET -H "Content-Type: application/json" 1.2.3.4:5000/exp/stress \
 -d '{"query":"100 - irate(node_cpu{mode=\"idle\"}[5m]) * 100", \
-"server":"prom","type":"duration","labels":["cpu"]}' > mydata.csv
+"server":"prometheus","type":"duration","labels":["cpu"]}' > mydata.csv
 ```
 We get a csv file with the data of the experiment.
 Let's explain the options use here:
