@@ -277,7 +277,7 @@ parser = argparse.ArgumentParser(prog="monex-server")
 parser.add_argument("configuration", type= str,
     help="Configuration file")
 parser.add_argument("-p", "--port", type= int, default=5000,
-    help="Configuration file")
+    help="port (default: 5000)")
 args = parser.parse_args()
-
+parse_conf(args.configuration)
 app.run(host= '0.0.0.0', port=args.port)
