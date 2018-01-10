@@ -68,9 +68,9 @@ Let's explain the options use here:
 ## Drawing metrics
 Now that we have our csv file, we can use monex-draw to make a figure.
 ```
-monex-draw -f mydata.csv -x 'time (sec)' -y 'core usage (%)' -t 'stress benchmark'
+monex-draw -F mydata.csv -x 'time (sec)' -y 'core usage (%)' -t 'stress benchmark'
 ```
 We can also draw only the first 3 core using the -c option:
 ```
-monex-draw -f mydata.csv -x 'time (sec)' -y 'core usage (%)' -c cpu0,cpu1,cpu2 -t 'stress benchmark'
+monex-draw -F mydata.csv -x 'time (sec)' -y 'core usage (%)' -c cpu0,cpu1,cpu2 -t 'stress benchmark'
 ```
