@@ -6,16 +6,31 @@ For this experiment, we want to monitor cpu usage. We will use two machines:
 - a monitoring node where we will start MonEx and Prometheus
 - an experiment node that we want to monitor
 
-First install MonEx and prometheus on the monitoring node, on Debian:
+First install MonEx and prometheus on the monitoring node, on Debian 9 (Stretch):
 ```
 apt install python3-pip python3-flask python3-requests r-base prometheus
 pip3 install flask-cors
 systemctl stop prometheus
 git clone https://github.com/madynes/monex.git
 ```
+On Debian 8 (Jessie):
+```
+apt install python3-pip python3-flask python3-requests r-base
+apt-get install -t jessie-backports prometheus
+pip3 install flask-cors
+systemctl stop prometheus
+git clone https://github.com/madynes/monex.git
+```
 Next, on the experiment node, install prometheus-node-exporter, curl and stress:
+
+For Debian 9 (Stretch):
 ```
 apt install prometheus-node-exporter curl stress
+```
+For Debian 8 (Jessie):
+```
+apt install curl stress
+apt-get install -t jessie-backports prometheus-node-exporter
 ```
 By default, prometheus-node-exporter expose metrics to the port 9100.
 Edit the configuration file of prometheus "prometheus-config.yml" with the experiment node address (with port 9100) and start prometheus on the monitoring node.
