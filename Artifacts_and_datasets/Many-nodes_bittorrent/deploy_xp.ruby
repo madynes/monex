@@ -1,9 +1,9 @@
 #!/usr/bin/ruby
 require 'distem'
 
-img = "file:///home/amerlin/image/peer.tgz"
-img_t = "file:///home/amerlin/image/tracker.tgz"
-ip = `ip -br a | grep eth0| tr -s ' ' | cut -d' ' -f3 | cut -d'/' -f 1`.strip
+img = "file:///home/amerlin/public/monex_peer.tgz"
+img_t = "file:///home/amerlin/public/monex_tracker.tgz"
+#ip = `ip -br a | grep eth0| tr -s ' ' | cut -d' ' -f3 | cut -d'/' -f 1`.strip
 
 Distem.client do |cl|
   hosts = cl.pnodes_info.keys
@@ -66,7 +66,7 @@ Distem.client do |cl|
     cl.vnode_execute(peer, "scp -o StrictHostKeyChecking=no root@peer-vadm:file.torrent ~/#{peer}")
     cl.vnode_execute(peer, "transmission-daemon -a 10.144.5.254,127.0.0.1 -w /root/#{peer} -O -Y -M")
     cl.vnode_execute(peer, "transmission-remote 127.0.0.1 --add /root/#{peer}/file.torrent")
-    print("starting getter")
+    #puts ("starting getter")
     cl.vnode_execute(peer, "systemctl start exporter")
 
   end
