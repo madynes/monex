@@ -107,7 +107,7 @@ EXAMPLE:
 Example of configuration file:
 
 {"targets":[
-  {"server":"prom", "type":"prometheus", "address":"127.0.0.1:9090"},
+  {"server":"prometheus", "type":"prometheus", "address":"127.0.0.1:9090"},
   {"server":"influx", "type":"influxdb", "address":"127.0.0.1:8086"}
 ],
 "metrics":[
@@ -127,7 +127,7 @@ To stop an experiment at a specify time:
 To get experiment results from a prometheus:
 
   curl -X GET 127.1:5000/exp/myxp -H "Content-Type: application/json" -d \
-    '{"query":"irate(cpu[4s])", "server":"prom", "labels":["cpu","mode"]}'
+    '{"query":"irate(cpu[4s])", "server":"prometheus", "labels":["cpu","mode"]}'
 
 To get expriment results from influxdb:
 

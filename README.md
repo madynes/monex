@@ -21,7 +21,7 @@ You can start by doing this [tutorial example](examples/simple_example/).
 To start the monex-server, you will need a configuration file with the targets from where to get metrics. For example, if we want to listen for a Prometheus server on the port 9090 of the localhost, the configuration file will look lke that:
 ```
 {"targets":[
-  {"server":"prom", "type":"prometheus", "address":"127.0.0.1:9090"}
+  {"server":"prometheus", "type":"prometheus", "address":"127.0.0.1:9090"}
   ]}
 ```
 By default, monex-server listen on port 5000.
@@ -33,7 +33,7 @@ curl -X POST 127.1:5000/exp/myexp
 ### Getting metrics
 To get metrics, we send a GET request with json data to the same url. The json data contain the target server and the metric that we want. The way to get the metric depend of the target use (Prometheus or InfluxDB). For example, if we want to get the cpu usage metric from a prometheus target, we can use the curl command:
 ```
-curl -X GET 127.1:5000/exp/myexp -H "Content-Type: application/json" -d '{"query":"irate(node_cpu[4s])", "server":"prom"}' > metric.csv
+curl -X GET 127.1:5000/exp/myexp -H "Content-Type: application/json" -d '{"query":"irate(node_cpu[4s])", "server":"prometheus"}' > metric.csv
 ```
 
 ### Drawing metrics
