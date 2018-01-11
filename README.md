@@ -1,5 +1,5 @@
 # MonEx
-MonEX (for long: **Mon**itoring **Ex**periments) is an integrated experiment monitoring framework. It fully integrates into the experiment workflow by encompassing all steps from data acquisition to producing publication-quality figures for each part of an experiment campaign. MonEx is based on recent infrastructure monitoring tools (*Prometheus* and *InfluxDB*) to support the various monitoring approaches of experiments.
+MonEx (for long: **Mon**itoring **Ex**periments) is an integrated experiment monitoring framework. It fully integrates into the experiment workflow by encompassing all steps from data acquisition to producing publication-quality figures for each part of an experiment campaign. MonEx is based on recent infrastructure monitoring tools (*Prometheus* and *InfluxDB*) to support the various monitoring approaches of experiments.
 
 
 ## Dependencies
