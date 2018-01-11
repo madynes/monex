@@ -1,5 +1,5 @@
 # MonEx
-MonEX (for long *Mon*itoring *Ex*periments) is an integrated experiment monitoring framework. It fully integrates into the experiment workflow by encompassing all steps from data acquisition to producing publication-quality figures for each part of an experiment campaign. MonEx is based on recent infrastructure monitoring tools (*Prometheus* and *InfluxDB*) to support the various monitoring approaches of experiments.
+MonEX (for long: **_Mon_**itoring **_Ex_**periments) is an integrated experiment monitoring framework. It fully integrates into the experiment workflow by encompassing all steps from data acquisition to producing publication-quality figures for each part of an experiment campaign. MonEx is based on recent infrastructure monitoring tools (*Prometheus* and *InfluxDB*) to support the various monitoring approaches of experiments.
 
 
 ## Dependencies
@@ -45,5 +45,6 @@ monex-draw -F metric.csv -x 'my x label' -y 'my y label' -t 'my title'
 You can find the complete documentation of monex-server [here](doc/monex-server.txt).
 
 ## Reproducing the use case experiments
-if you are looking to reproduce the experiments that are listed in the MonEX paper, you can find their datasets [here](Artifacts_and_datasets). You can should refer to the [artifact file], which contains a step-by-step tutorial to reproduce them. 
+if you are looking to reproduce the experiments that are listed in the MonEX paper, you can find their datasets [here](Artifacts_and_datasets). You should refer to the 
+[artifact file](Artifacts_and_datasets/artifacts.pdf), which contains a step-by-step tutorial to reproduce them. 
 
