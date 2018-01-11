@@ -45,6 +45,6 @@ monex-draw -F metric.csv -x 'my x label' -y 'my y label' -t 'my title'
 You can find the complete documentation of monex-server [here](doc/monex-server.txt).
 
 ## Reproducing the use case experiments
-if you are looking to reproduce the experiments that are listed in the MonEX paper, you can find their datasets [here](Artifacts_and_datasets). You should refer to the 
+If you are looking to reproduce the experiments that are listed in the MonEX paper, you can find their datasets [here](Artifacts_and_datasets). You should refer to the 
 [artifact file](Artifacts_and_datasets/artifacts.pdf), which contains a step-by-step tutorial to reproduce them. 
 
