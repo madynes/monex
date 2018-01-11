@@ -25,18 +25,20 @@ Distem.client do |cl|
                                 {'name' => 'if1', 'vnetwork' => 'vadm'}],
                   })
 
-  (0..3).each do |x|
-      cl.vnode_create("peer0#{x}",
-                {'host' => hosts[1],
+  (0..9).each do |y|
+    (0..9).each do |x|
+      cl.vnode_create("peer#{y}#{x}",
+                {'host' => hosts[y+1],
                 'vfilesystem' =>{'image' => img, 'shared' => true},
                 'vifaces' => [{'name' => 'if0', 'vnetwork' => 'vnet',
                                'output' => {'bandwidth' => {'rate' => "30kbps"}},
                                'input' => {'bandwidth' => {'rate' => "30kbps"}}},
                                {'name' => 'if1', 'vnetwork' => 'vadm'}],
                 })
+    end
   end
 
-  peers = (0..3).map {|x| "peer#{x.to_s.rjust(2,'0')}"}
+  peers = (0..99).map {|x| "peer#{x.to_s.rjust(2,'0')}"}
   peers << 'peer'
   nodes = peers
   nodes << 'tracker'
