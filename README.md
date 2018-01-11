@@ -1,5 +1,6 @@
 # MonEx
-MONitoring EXperiment
+MonEX (for long *Mon*itoring *Ex*periments) is an integrated experiment monitoring framework. It fully integrates into the experiment workflow by encompassing all steps from data acquisition to producing publication-quality figures for each part of an experiment campaign. MonEx is based on recent infrastructure monitoring tools (*Prometheus* and *InfluxDB*) to support the various monitoring approaches of experiments.
+
 
 ## Dependencies
 - python3
@@ -14,7 +15,8 @@ apt install python3-pip python3-flask python3-requests r-base
 pip3 install flask-cors
 ```
 ## First steps
-You can start by doing the [tutorial](examples/simple_example/).
+You can start by doing this [tutorial example](examples/simple_example/).
+
 ### Starting monex-server
 To start the monex-server, you will need a configuration file with the targets from where to get metrics. For example, if we want to listen for a Prometheus server on the port 9090 of the localhost, the configuration file will look lke that:
 ```
@@ -41,3 +43,7 @@ monex-draw -F metric.csv -x 'my x label' -y 'my y label' -t 'my title'
 ```
 
 You can find the complete documentation of monex-server [here](doc/monex-server.txt).
+
+## Reproducing the use case experiments
+if you are looking to reproduce the experiments that are listed in the MonEX paper, you can find their datasets [here](Artifacts_and_datasets). You can should refer to the [artifact file], which contains a step-by-step tutorial to reproduce them. 
+
