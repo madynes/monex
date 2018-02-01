@@ -35,7 +35,7 @@ apt-get install -t jessie-backports prometheus-node-exporter
 By default, prometheus-node-exporter expose metrics to the port 9100.
 Edit the configuration file of prometheus "prometheus-config.yml" with the experiment node address (with port 9100) and start prometheus on the monitoring node.
 ```
-prometheus -config.file prometheus-config.yml
+prometheus --config.file prometheus-config.yml
 ```
 Now we have prometheus in place. We only need to configure and start MonEx.
 Since we start MonEx on the same machine as Prometheus, we have to listen Prometheus on the localhost at port 9090. Check the monex-server.conf and launch monex-server:
